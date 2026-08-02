@@ -55,3 +55,36 @@ export const createListing = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, listing, "Listing created successfully!"));
 });
+
+export const updateListing = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (Object.keys(req.body).length === 0) {
+    throw new ApiError(400, "Please provide at least one field to update.");
+  }
+
+  const updatedListing = await Listing.findByIdAndUpdate(id, req.body, {
+    runValidators: true,
+    new: true,
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedListing, "Listing updated successfully!"),
+    );
+});
+
+export const deleteListing = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid listing id!");
+  }
+
+  await Listing.findByIdAndDelete(id);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Listing delete successfully!"));
+});
