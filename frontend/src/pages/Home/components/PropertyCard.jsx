@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { Heart, ShieldCheck, ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 const PropertyCard = ({ listing }) => {
-  const [currentImgIndex, setCurrentImgIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
 
   return (
     <div className="group relative flex flex-col">
       <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-slate-100">
         <img
-          src={listing.images[currentImgIndex]}
+          src={listing.image.url}
           alt={listing.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -31,28 +30,6 @@ const PropertyCard = ({ listing }) => {
           </div>
         )}
 
-        {listing.images.length > 1 && (
-          <>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentImgIndex((prev) => (prev - 1 + listing.images.length) % listing.images.length);
-              }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-slate-800 opacity-0 shadow-md backdrop-blur-sm transition group-hover:opacity-100 hover:bg-white"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setCurrentImgIndex((prev) => (prev + 1) % listing.images.length);
-              }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 text-slate-800 opacity-0 shadow-md backdrop-blur-sm transition group-hover:opacity-100 hover:bg-white"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </>
-        )}
       </div>
 
       <div className="mt-3 flex flex-col gap-1">
@@ -66,7 +43,7 @@ const PropertyCard = ({ listing }) => {
         <p className="text-sm text-slate-500">{listing.location}</p>
         <p className="text-sm text-slate-400">{listing.dates}</p>
         <div className="mt-1 flex items-baseline gap-1">
-          <span className="text-base font-bold text-slate-900">${listing.price}</span>
+          <span className="text-base font-bold text-slate-900">₹{listing.price}</span>
           <span className="text-sm text-slate-500">/ night</span>
         </div>
       </div>

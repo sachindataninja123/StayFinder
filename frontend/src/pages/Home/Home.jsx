@@ -9,41 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getListings } from "../../features/listings/listingSlice";
 
-const MOCK_LISTINGS = [
-  {
-    id: "1",
-    title: "Aethelgard Glass Villa",
-    location: "Reykjavík, Iceland",
-    rating: 4.98,
-    reviewsCount: 124,
-    price: 420,
-    dates: "Oct 12 – 17",
-    isSuperhost: true,
-    category: "luxe",
-    images: [
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80",
-    ],
-  },
-  {
-    id: "2",
-    title: "Serenity Oceanfront Sanctuary",
-    location: "Malibu, California",
-    rating: 4.95,
-    reviewsCount: 89,
-    price: 850,
-    dates: "Nov 2 – 8",
-    isSuperhost: true,
-    category: "beachfront",
-    images: [
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-    ],
-  },
-];
-
 export default function Home() {
   const dispatch = useDispatch();
   const { items, loading, error } = useSelector((state) => state.listings);
+
+  const [selectedCategory, setSelectedCategory] = useState("trending");
 
   console.log(items);
 
@@ -51,15 +21,13 @@ export default function Home() {
     dispatch(getListings());
   }, [dispatch]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
-  const [selectedCategory, setSelectedCategory] = useState("trending");
-
   const filteredListings =
     selectedCategory === "trending"
-      ? MOCK_LISTINGS
-      : MOCK_LISTINGS.filter((item) => item.category === selectedCategory);
+      ? items
+      : items.filter((item) => item.category === selectedCategory);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="min-h-screen flex flex-col bg-white font-sans text-slate-900 antialiased">
@@ -85,7 +53,7 @@ export default function Home() {
       <main className="grow mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredListings.map((listing) => (
-            <PropertyCard key={listing.id} listing={listing} />
+            <PropertyCard key={listing._id} listing={listing} />
           ))}
         </div>
       </main>
