@@ -15,10 +15,15 @@ const listingSchema = new Schema(
     },
 
     image: {
-      type: String,
-      default:
-        "https://images.unsplash.com/photo-1563748415118-f5214efd4bcf?q=80&w=1476&auto=format&fit=crop",
-      set: (v) => (v?.trim() ? v : undefined),
+      url: {
+        type: String,
+        default:
+          "https://images.unsplash.com/photo-1563748415118-f5214efd4bcf?q=80&w=1476&auto=format&fit=crop",
+        set: (v) => (v?.trim() ? v : undefined),
+      },
+      publicId: {
+        type: String,
+      },
     },
 
     price: {
@@ -40,7 +45,7 @@ const listingSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Listing = mongoose.model("Listing", listingSchema);
