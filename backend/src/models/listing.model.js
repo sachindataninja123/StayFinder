@@ -23,7 +23,6 @@ const listingSchema = new Schema(
       },
       publicId: {
         type: String,
-        default: null,
       },
     },
 
