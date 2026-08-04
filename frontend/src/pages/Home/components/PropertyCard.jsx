@@ -58,7 +58,7 @@ const PropertyCard = ({ listing }) => {
         <p className="text-sm text-slate-400">{listing.dates}</p>
         <div className="mt-1 flex items-baseline gap-1">
           <span className="text-base font-bold text-slate-900">
-            ₹{listing.price}
+            ₹{Number(listing.price).toLocaleString("en-IN")}
           </span>
           <span className="text-sm text-slate-500">/ night</span>
         </div>

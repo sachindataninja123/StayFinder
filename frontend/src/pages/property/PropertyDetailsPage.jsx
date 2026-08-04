@@ -214,7 +214,7 @@ export function PropertyDetailsPage() {
             <div className="flex items-baseline justify-between">
               <div>
                 <span className="text-2xl font-bold text-slate-900">
-                  ${selectedListing.price}
+                ₹{Number(selectedListing.price).toLocaleString("en-IN")}
                 </span>
                 <span className="text-slate-500 text-sm"> / night</span>
               </div>
@@ -271,27 +271,29 @@ export function PropertyDetailsPage() {
                 >
                   Reserve
                 </button>
+<div className="space-y-2 text-sm text-slate-600 pt-2">
+  <div className="flex justify-between">
+    <span>
+      ₹{selectedListing.price.toLocaleString("en-IN")} × {nights} nights
+    </span>
+    <span>₹{subtotal.toLocaleString("en-IN")}</span>
+  </div>
 
-                <div className="space-y-2 text-sm text-slate-600 pt-2">
-                  <div className="flex justify-between">
-                    <span>
-                      ${selectedListing.price} x {nights} nights
-                    </span>
-                    <span>${subtotal}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Cleaning fee</span>
-                    <span>${cleaningFee}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>StayHaven service fee</span>
-                    <span>${serviceFee}</span>
-                  </div>
-                  <div className="flex justify-between border-t border-slate-100 pt-3 font-bold text-slate-900 text-base">
-                    <span>Total before taxes</span>
-                    <span>${total}</span>
-                  </div>
-                </div>
+  <div className="flex justify-between">
+    <span>Cleaning fee</span>
+    <span>₹{cleaningFee.toLocaleString("en-IN")}</span>
+  </div>
+
+  <div className="flex justify-between">
+    <span>StayHaven service fee</span>
+    <span>₹{serviceFee.toLocaleString("en-IN")}</span>
+  </div>
+
+  <div className="flex justify-between border-t border-slate-100 pt-3 font-bold text-slate-900 text-base">
+    <span>Total before taxes</span>
+    <span>₹{total.toLocaleString("en-IN")}</span>
+  </div>
+</div>
               </>
             )}
           </div>
