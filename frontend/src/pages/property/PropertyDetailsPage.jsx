@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getListingById,
   clearSelectedListing,
+  deleteListing,
 } from "../../features/listings/listingSlice";
 
 export function PropertyDetailsPage() {
@@ -21,15 +22,30 @@ export function PropertyDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const { selectedListing, loading, error } = useSelector(
-    (state) => state.listings
+    (state) => state.listings,
   );
 
   useEffect(() => {
     dispatch(getListingById(id));
     return () => dispatch(clearSelectedListing());
   }, [id, dispatch]);
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    try {
+      const result = await dispatch(deleteListing(id));
+
+      if (deleteListing.fulfilled.match(result)) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -40,8 +56,8 @@ export function PropertyDetailsPage() {
     selectedListing.images && selectedListing.images.length > 0
       ? selectedListing.images
       : selectedListing.image?.url
-      ? [selectedListing.image.url]
-      : [];
+        ? [selectedListing.image.url]
+        : [];
 
   const nights = 5;
   const cleaningFee = 120;
@@ -73,9 +89,17 @@ export function PropertyDetailsPage() {
 
       {/* Title & Metadata */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
-          {selectedListing.title}
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+            {selectedListing.title}
+          </h1>
+          <button
+            onClick={() => setShowConfirmModal(true)}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition cursor-pointer"
+          >
+            Delete Property
+          </button>
+        </div>
         <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-600">
           <div className="flex items-center gap-1 font-semibold text-slate-900">
             <Star className="h-4 w-4 fill-slate-900 text-slate-900" />
@@ -103,29 +127,41 @@ export function PropertyDetailsPage() {
 
       {/* Photo Gallery Grid */}
       {images.length > 0 && (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-3 overflow-hidden rounded-3xl">
-          <div className="md:col-span-2 aspect-4/3 md:aspect-auto">
+        <div
+          className={`mt-6 gap-3 overflow-hidden rounded-3xl ${
+            images.length === 1 ? "w-full" : "grid grid-cols-1 md:grid-cols-4"
+          }`}
+        >
+          {/* Main Image */}
+          <div
+            className={`${
+              images.length === 1
+                ? "w-full h-80 md:h-100"
+                : "md:col-span-2 h-64 md:h-100"
+            }`}
+          >
             <img
               src={images[0]}
               alt="Main"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover rounded-2xl md:rounded-3xl"
             />
           </div>
+
+          {/* Secondary Grid (Visible only if > 1 image) */}
           {images.length > 1 && (
-            <div className="hidden md:grid md:col-span-2 grid-cols-2 gap-3">
+            <div className="hidden md:grid md:col-span-2 grid-cols-2 gap-3 h-100">
               {images.slice(1, 5).map((img, idx) => (
                 <img
                   key={idx}
                   src={img}
                   alt={`Gallery ${idx}`}
-                  className="h-48 w-full object-cover"
+                  className="h-48.5 w-full object-cover rounded-2xl"
                 />
               ))}
             </div>
           )}
         </div>
       )}
-
       {/* Page Content Layout */}
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Left Info Column */}
@@ -214,7 +250,7 @@ export function PropertyDetailsPage() {
             <div className="flex items-baseline justify-between">
               <div>
                 <span className="text-2xl font-bold text-slate-900">
-                ₹{Number(selectedListing.price).toLocaleString("en-IN")}
+                  ₹{Number(selectedListing.price).toLocaleString("en-IN")}
                 </span>
                 <span className="text-slate-500 text-sm"> / night</span>
               </div>
@@ -256,9 +292,7 @@ export function PropertyDetailsPage() {
                     </div>
                   </div>
                   <div className="p-3">
-                    <p className="font-bold uppercase text-slate-500">
-                      Guests
-                    </p>
+                    <p className="font-bold uppercase text-slate-500">Guests</p>
                     <p className="font-semibold text-slate-800 text-sm mt-1">
                       2 guests
                     </p>
@@ -271,34 +305,65 @@ export function PropertyDetailsPage() {
                 >
                   Reserve
                 </button>
-<div className="space-y-2 text-sm text-slate-600 pt-2">
-  <div className="flex justify-between">
-    <span>
-      ₹{selectedListing.price.toLocaleString("en-IN")} × {nights} nights
-    </span>
-    <span>₹{subtotal.toLocaleString("en-IN")}</span>
-  </div>
+                <div className="space-y-2 text-sm text-slate-600 pt-2">
+                  <div className="flex justify-between">
+                    <span>
+                      ₹{selectedListing.price.toLocaleString("en-IN")} ×{" "}
+                      {nights} nights
+                    </span>
+                    <span>₹{subtotal.toLocaleString("en-IN")}</span>
+                  </div>
 
-  <div className="flex justify-between">
-    <span>Cleaning fee</span>
-    <span>₹{cleaningFee.toLocaleString("en-IN")}</span>
-  </div>
+                  <div className="flex justify-between">
+                    <span>Cleaning fee</span>
+                    <span>₹{cleaningFee.toLocaleString("en-IN")}</span>
+                  </div>
 
-  <div className="flex justify-between">
-    <span>StayHaven service fee</span>
-    <span>₹{serviceFee.toLocaleString("en-IN")}</span>
-  </div>
+                  <div className="flex justify-between">
+                    <span>StayHaven service fee</span>
+                    <span>₹{serviceFee.toLocaleString("en-IN")}</span>
+                  </div>
 
-  <div className="flex justify-between border-t border-slate-100 pt-3 font-bold text-slate-900 text-base">
-    <span>Total before taxes</span>
-    <span>₹{total.toLocaleString("en-IN")}</span>
-  </div>
-</div>
+                  <div className="flex justify-between border-t border-slate-100 pt-3 font-bold text-slate-900 text-base">
+                    <span>Total before taxes</span>
+                    <span>₹{total.toLocaleString("en-IN")}</span>
+                  </div>
+                </div>
               </>
             )}
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Delete Property?
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete this listing? This action cannot
+              be undone.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 border rounded-lg hover:bg-gray-50 text-gray-700 font-medium disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium disabled:opacity-50"
+              >
+                {loading ? "Deleting..." : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -15,8 +15,6 @@ export default function Home() {
 
   const [selectedCategory, setSelectedCategory] = useState("trending");
 
-  console.log(items);
-
   useEffect(() => {
     dispatch(getListings());
   }, [dispatch]);
