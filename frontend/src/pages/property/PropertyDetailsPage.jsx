@@ -8,8 +8,10 @@ import {
   ArrowLeft,
   Check,
   CheckCircle2,
+  Trash,
+  Edit,
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getListingById,
@@ -93,12 +95,17 @@ export function PropertyDetailsPage() {
           <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
             {selectedListing.title}
           </h1>
-          <button
-            onClick={() => setShowConfirmModal(true)}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition cursor-pointer"
-          >
-            Delete Property
-          </button>
+          <div className="flex items-center justify-center gap-2">
+            <button
+              onClick={() => setShowConfirmModal(true)}
+              className="bg-red-100 hover:bg-red-600 text-black px-2 py-2 rounded-full text-sm transition cursor-pointer hover:text-white"
+            >
+              <Trash size={20} />
+            </button>
+            <Link to={`/listings/${id}/edit`} className="bg-blue-200 hover:bg-blue-500 text-black px-2 py-2 rounded-full text-sm transition cursor-pointer hover:text-white">
+              <Edit size={20}/>
+            </Link>
+          </div>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-600">
           <div className="flex items-center gap-1 font-semibold text-slate-900">

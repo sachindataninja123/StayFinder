@@ -30,6 +30,10 @@ export const deleteListing = async (id) => {
 };
 
 export const updateListingImage = async ({ id, formData }) => {
-  const res = await api.patch(`/listings/${id}/update-image`, formData);
+  const res = await api.patch(`/listings/${id}/update-image`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
