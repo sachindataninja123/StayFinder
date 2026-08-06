@@ -14,7 +14,7 @@ const HostBanner = () => {
           </p>
           <div className="mt-8">
             <Link
-              to="/host"
+              to="/listings/new"
               className="rounded-xl bg-rose-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition hover:bg-rose-600"
             >
               Become a Host Today

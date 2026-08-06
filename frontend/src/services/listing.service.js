@@ -11,7 +11,11 @@ export const getListingById = async (id) => {
 };
 
 export const createListing = async (formData) => {
-  const res = await api.post(`/listings/create`, formData);
+  const res = await api.post(`/listings/create`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 
@@ -26,6 +30,10 @@ export const deleteListing = async (id) => {
 };
 
 export const updateListingImage = async ({ id, formData }) => {
-  const res = await api.patch(`/listings/${id}/update-image`, formData);
+  const res = await api.patch(`/listings/${id}/update-image`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
