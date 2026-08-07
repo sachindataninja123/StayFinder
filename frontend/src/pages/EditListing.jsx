@@ -15,6 +15,8 @@ export default function EditListing() {
     (state) => state.listings || {},
   );
 
+  const [validated, setValidated] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -23,7 +25,6 @@ export default function EditListing() {
     country: "",
   });
 
- 
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -69,8 +70,16 @@ export default function EditListing() {
 
   const handleDetailsSubmit = async (e) => {
     e.preventDefault();
-    setDetailsLoading(true);
+
+    // bootstrap validation
+    const form = e.currentTarget;
+    setValidated(true);
     setSuccessMessage("");
+    if (!form.checkValidity()) {
+      return;
+    }
+
+    setDetailsLoading(true);
 
     try {
       const result = await dispatch(updateListing({ id, formData }));
@@ -101,7 +110,7 @@ export default function EditListing() {
       );
       if (updateListingImage.fulfilled.match(result)) {
         setSuccessMessage("Listing image updated successfully!");
-        setImageFile(null); 
+        setImageFile(null);
       }
     } catch (err) {
       console.error("Failed to update image:", err);
@@ -194,8 +203,18 @@ export default function EditListing() {
                 required
                 value={formData.title}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-sm"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
+                  validated && !formData.title
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
               />
+
+              {validated && !formData.title && (
+                <p className="mt-1 text-sm text-red-600">
+                  Please enter a title.
+                </p>
+              )}
             </div>
 
             {/* Description */}
@@ -209,8 +228,18 @@ export default function EditListing() {
                 required
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-sm"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
+                  validated && !formData.description
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
               />
+
+              {validated && !formData.description && (
+                <p className="mt-1 text-sm text-red-600">
+                  Please enter a description.
+                </p>
+              )}
             </div>
 
             {/* Price */}
@@ -225,8 +254,18 @@ export default function EditListing() {
                 min="0"
                 value={formData.price}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-sm"
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
+                  validated && !formData.price
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
               />
+
+              {validated && !formData.price && (
+                <p className="mt-1 text-sm text-red-600">
+                  Please enter a price.
+                </p>
+              )}
             </div>
 
             {/* Location & Country */}
@@ -241,8 +280,18 @@ export default function EditListing() {
                   required
                   value={formData.location}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-sm"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
+                    validated && !formData.location
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
                 />
+
+                {validated && !formData.location && (
+                  <p className="mt-1 text-sm text-red-600">
+                    Please enter a city.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -255,8 +304,18 @@ export default function EditListing() {
                   required
                   value={formData.country}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-sm"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none ${
+                    validated && !formData.country
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
                 />
+
+                {validated && !formData.country && (
+                  <p className="mt-1 text-sm text-red-600">
+                    Please enter a country.
+                  </p>
+                )}
               </div>
             </div>
 
