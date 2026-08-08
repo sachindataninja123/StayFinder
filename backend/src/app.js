@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import listingRouter from "./routes/listing.routes.js";
 dotenv.config();
 import cors from "cors";
+import reviewRouter from "./routes/review.route.js";
 
 const app = express();
 app.use(express.json());
@@ -18,5 +19,6 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/listings", listingRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 export default app;
