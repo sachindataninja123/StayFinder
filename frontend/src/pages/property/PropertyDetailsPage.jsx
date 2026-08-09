@@ -18,6 +18,13 @@ import {
   clearSelectedListing,
   deleteListing,
 } from "../../features/listings/listingSlice";
+import ReviewForm from "./components/ReviewForm";
+import {
+  clearReviewError,
+  fetchReviews,
+} from "../../features/reviews/reviewSlice";
+import { deleteReviews } from "../../services/review.service";
+import ReviewItem from "./components/ReviewItem";
 
 export function PropertyDetailsPage() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -25,6 +32,8 @@ export function PropertyDetailsPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const [editingReview, setEditingReview] = useState(null);
 
   const { selectedListing, loading, error } = useSelector(
     (state) => state.listings,
@@ -34,6 +43,27 @@ export function PropertyDetailsPage() {
     dispatch(getListingById(id));
     return () => dispatch(clearSelectedListing());
   }, [id, dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchReviews(id));
+    return () => dispatch(clearReviewError());
+  }, [id, dispatch]);
+
+  const { reviews } = useSelector((state) => state.reviews);
+
+  console.log(reviews);
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      const result = await dispatch(deleteReviews(reviewId));
+
+      if (deleteReviews.fulfilled.match(result)) {
+        alert("review delete successfully!");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -51,7 +81,7 @@ export function PropertyDetailsPage() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
-  if (!selectedListing) return <p>Loading...</p>; // guards against null on first render
+  if (!selectedListing) return <p>Loading...</p>;
 
   // Safe fallback: use `images` array if it exists, otherwise wrap single `image.url`
   const images =
@@ -102,8 +132,11 @@ export function PropertyDetailsPage() {
             >
               <Trash size={20} />
             </button>
-            <Link to={`/listings/${id}/edit`} className="bg-blue-200 hover:bg-blue-500 text-black px-2 py-2 rounded-full text-sm transition cursor-pointer hover:text-white">
-              <Edit size={20}/>
+            <Link
+              to={`/listings/${id}/edit`}
+              className="bg-blue-200 hover:bg-blue-500 text-black px-2 py-2 rounded-full text-sm transition cursor-pointer hover:text-white"
+            >
+              <Edit size={20} />
             </Link>
           </div>
         </div>
@@ -370,6 +403,41 @@ export function PropertyDetailsPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Reviews section */}
+      <div className="mt-12 border-t border-slate-200 pt-8 space-y-8">
+        <h2 className="text-2xl font-bold text-slate-900">Guest Reviews</h2>
+
+        <ReviewForm listing={selectedListing} />
+
+        {/* Display existing reviews */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {reviews && reviews.length > 0 ? (
+            reviews.map((rev) => (
+              <ReviewItem
+                key={rev._id}
+                review={rev}
+                // currentUserId={currentUser?._id}
+                onEdit={(reviewToEdit) => setEditingReview(reviewToEdit)}
+                onDelete={handleDeleteReview}
+              />
+            ))
+          ) : (
+            <p className="text-slate-500 text-sm">
+              No reviews yet. Be the first to leave one!
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Edit Review Modal */}
+      {editingReview && (
+        <EditReviewModal
+          review={editingReview}
+          listingId={id}
+          onClose={() => setEditingReview(null)}
+        />
       )}
     </div>
   );
