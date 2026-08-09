@@ -4,7 +4,7 @@ import {
   getReviews,
   updateReviews,
   deleteReviews,
-} from "../services/reviewService"; // adjust path as needed
+} from "../../services/review.service";
 
 // Thunks
 
@@ -12,7 +12,8 @@ export const createReview = createAsyncThunk(
   "reviews/create",
   async ({ formData, id }, { rejectWithValue }) => {
     try {
-      return await addReview({ formData, id });
+      const result = await addReview({ formData, id });
+      return result.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
@@ -23,7 +24,8 @@ export const fetchReviews = createAsyncThunk(
   "reviews/fetch",
   async (id, { rejectWithValue }) => {
     try {
-      return await getReviews(id);
+      const result = await getReviews(id);
+      return result.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
