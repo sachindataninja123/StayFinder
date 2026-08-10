@@ -3,10 +3,13 @@ import dotenv from "dotenv";
 import listingRouter from "./routes/listing.routes.js";
 dotenv.config();
 import cors from "cors";
+import session from "express-session";
+import cookieParser from "cookie-parser";
 import reviewRouter from "./routes/review.route.js";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
@@ -14,6 +17,19 @@ app.use(
     credentials: true,
   }),
 );
+const sessionOptions = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+  },
+};
+
+app.use(session(sessionOptions));
+
 app.get("/", (req, res) => {
   res.send("Server is connected!!");
 });
