@@ -6,9 +6,10 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../utils/generateToken.js";
+import jwt from "jsonwebtoken";
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password , phone, role } = req.body;
+  const { name, email, password, phone, role } = req.body;
 
   if (!name || !email || !password) {
     throw new ApiError(400, "Name, email or password are required!");
@@ -76,4 +77,67 @@ export const loginUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, safeUser, "user loggedIn successfully!"));
+});
+
+export const getMe = asyncHandler(async (req, res) => {
+  const user = req.user;
+
+  if (!user) {
+    throw new ApiError(401, "Authentication required");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User fetched successfully!"));
+});
+
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken) {
+    throw new ApiError(401, "Refresh token is required");
+  }
+
+  let decoded;
+
+  try {
+    decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  } catch (error) {
+    throw new ApiError(401, "Invalid or expired refresh token");
+  }
+
+  const user = await User.findById(decoded.id).select("-password");
+
+  if (!user) {
+    throw new ApiError(401, "User no longer exists");
+  }
+
+  const accessToken = await generateAccessToken(user);
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 15 * 60 * 1000,
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Access token refreshed successfully"));
+});
+
+export const logout = asyncHandler(async (req, res) => {
+  res
+    .clearCookie("accessToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    })
+    .clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+
+  res.status(200).json(new ApiResponse(200, "user Logout successfully"));
 });
