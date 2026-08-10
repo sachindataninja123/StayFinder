@@ -6,6 +6,7 @@ import cors from "cors";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import reviewRouter from "./routes/review.route.js";
+import userRouter from "./routes/user.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -36,5 +37,6 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/listings", listingRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/users", userRouter);
 
 export default app;
