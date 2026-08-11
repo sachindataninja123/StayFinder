@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { registerUser } from "../features/auth/authSlice"; // Adjust path to your auth slice
+import { registerUser } from "../features/auth/auth.slice";
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -13,7 +13,7 @@ export default function Register() {
     email: "",
     password: "",
     phone: "",
-    role: "guest", // Default role
+    role: "guest", 
   });
 
   const handleChange = (e) => {
@@ -24,7 +24,7 @@ export default function Register() {
     e.preventDefault();
     const result = await dispatch(registerUser(formData));
     if (registerUser.fulfilled.match(result)) {
-      navigate("/login");
+      navigate("/signin");
     }
   };
 

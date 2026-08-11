@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import {
   getMe,
   login,
-  logout,
+  logoutService,
   register,
   tokenRefresh,
 } from "../../services/auth.service";
@@ -33,8 +33,7 @@ const loginUser = createAsyncThunk(
       const res = await login(formData);
       return res.data;
     } catch (error) {
-      const message =
-        error.response?.data?.detail ||
+      error.response?.data?.detail ||
         error.response?.data?.message ||
         "Login failed";
       return rejectWithValue(message);
@@ -78,7 +77,7 @@ const logoutUser = createAsyncThunk(
   "auth/logout",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await logout();
+      const res = await logoutService();
       return res.data;
     } catch (error) {
       const message =

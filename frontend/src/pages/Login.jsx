@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { loginUser } from "../features/auth/authSlice"; // Adjust path to your auth slice
+import { loginUser } from "../features/auth/auth.slice";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -94,7 +94,10 @@ export default function Login() {
           <div className="mt-6 border-t border-gray-100 pt-4 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link to="/signup" className="font-semibold text-gray-900 underline hover:text-rose-500">
+              <Link
+                to="/signup"
+                className="font-semibold text-gray-900 underline hover:text-rose-500"
+              >
                 Sign up
               </Link>
             </p>

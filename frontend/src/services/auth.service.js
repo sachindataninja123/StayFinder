@@ -24,10 +24,10 @@ const tokenRefresh = async () => {
   return res.data;
 };
 
-const logout = async () => {
+const logoutService = async () => {
   const res = await api.post("/auth/logout");
 
   return res.data;
 };
 
-export { register, login, tokenRefresh, logout, getMe };
+export { register, login, tokenRefresh, logoutService, getMe };
