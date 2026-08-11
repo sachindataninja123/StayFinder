@@ -74,9 +74,17 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   const safeUser = await User.findById(user._id).select("-password");
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, safeUser, "user loggedIn successfully!"));
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        safeUser,
+        accessToken,
+        refreshToken,
+      },
+      "user loggedIn successfully!",
+    ),
+  );
 });
 
 export const getMe = asyncHandler(async (req, res) => {
