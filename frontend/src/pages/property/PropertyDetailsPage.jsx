@@ -54,7 +54,6 @@ export function PropertyDetailsPage() {
 
   const { reviews } = useSelector((state) => state.reviews);
 
-  console.log(reviews);
 
   const handleDeleteReview = async (reviewId) => {
     try {

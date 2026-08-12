@@ -33,7 +33,8 @@ const loginUser = createAsyncThunk(
       const res = await login(formData);
       return res.data;
     } catch (error) {
-      error.response?.data?.detail ||
+      const message =
+        error.response?.data?.detail ||
         error.response?.data?.message ||
         "Login failed";
       return rejectWithValue(message);
@@ -95,6 +96,7 @@ const initialState = {
   user: null,
   isAuthenticated: false,
   loading: false,
+  initializing: true,
   error: null,
 };
 
@@ -153,22 +155,20 @@ const authSlice = createSlice({
 
       // getMe
       .addCase(getMeUser.pending, (state) => {
-        state.loading = true;
         state.user = null;
       })
       .addCase(getMeUser.fulfilled, (state, action) => {
-        state.loading = false;
+        state.initializing = false;
         state.isAuthenticated = true;
         state.user = action.payload;
-        const { accessToken } = action.payload;
-        if (accessToken) {
-          localStorage.setItem("token", accessToken);
-        }
       })
       .addCase(getMeUser.rejected, (state, action) => {
-        state.loading = false;
         state.error = action.payload;
-        // no toast here — this often runs silently on app load to check session
+        state.user = null;
+        state.isAuthenticated = false;
+        state.initializing = false;
+
+        localStorage.removeItem("token");
       })
 
       // refreshToken
