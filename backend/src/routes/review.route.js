@@ -5,12 +5,13 @@ import {
   getReviewsByListings,
   updateReview,
 } from "../controllers/review.controller.js";
+import { isAuth } from "../middlewares/isAuth.middleware.js";
 
 const reviewRouter = express.Router();
 
-reviewRouter.post("/:id/create", createReview);
+reviewRouter.post("/:id/create", isAuth, createReview);
 reviewRouter.get("/:id", getReviewsByListings);
-reviewRouter.patch("/:reviewId/update", updateReview);
-reviewRouter.delete("/:reviewId", deleteReview);
+reviewRouter.patch("/:reviewId/update", isAuth, updateReview);
+reviewRouter.delete("/:reviewId", isAuth, deleteReview);
 
 export default reviewRouter;

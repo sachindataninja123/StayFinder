@@ -69,6 +69,7 @@ export const createListing = asyncHandler(async (req, res) => {
     location,
     country,
     image,
+    owner: req.user._id,
   });
 
   return res
@@ -78,10 +79,17 @@ export const createListing = asyncHandler(async (req, res) => {
 
 export const updateListingImage = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const listing = await Listing.findById(id);
 
+  const listing = await Listing.findById(id);
   if (!listing) {
     throw new ApiError(404, "Listing not found");
+  }
+
+  if (listing.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(
+      403,
+      "You are not allowed to update this listing image!",
+    );
   }
 
   if (!req.file?.path) {
@@ -115,8 +123,22 @@ export const updateListingImage = asyncHandler(async (req, res) => {
 export const updateListing = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid listing id!");
+  }
+
   if (Object.keys(req.body).length === 0) {
     throw new ApiError(400, "Please provide at least one field to update.");
+  }
+
+  const listing = await Listing.findById(id);
+
+  if (!listing) {
+    throw new ApiError(404, "Listing not found!");
+  }
+
+  if (listing.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not allowed to update this listing!");
   }
 
   const updatedListing = await Listing.findByIdAndUpdate(id, req.body, {
@@ -136,6 +158,15 @@ export const deleteListing = asyncHandler(async (req, res) => {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     throw new ApiError(400, "Invalid listing id!");
+  }
+
+  const listing = await Listing.findById(id);
+  if (!listing) {
+    throw new ApiError(404, "Listing not found!");
+  }
+
+  if (listing.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not allowed to update this listing!");
   }
 
   await Listing.findByIdAndDelete(id);

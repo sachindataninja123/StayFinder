@@ -19,13 +19,14 @@ export const createReview = asyncHandler(async (req, res) => {
 
   const listing = await Listing.findById(id);
   if (!listing) {
-    throw new ApiError("404", "Listing not found!");
+    throw new ApiError(404, "Listing not found!");
   }
 
   const review = await Review.create({
     rating,
     comment,
     listing: id,
+    author: req.user._id,
   });
 
   return res
@@ -65,8 +66,12 @@ export const updateReview = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Review not  found!");
   }
 
-  const updatedReview = await Review.findByIdAndUpdate(
-    reviewId,
+  if (review.author.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not allowed to update this review!");
+  }
+
+  const updatedReview = await Review.findOneAndUpdate(
+    { _id: reviewId, author: req.user._id },
     { rating, comment },
     {
       runValidators: true,
@@ -75,7 +80,7 @@ export const updateReview = asyncHandler(async (req, res) => {
   );
 
   if (!updatedReview) {
-    throw new ApiError(404, "Review not found!");
+    throw new ApiError(404, "Review not found or you are not the owner!");
   }
 
   return res
@@ -90,9 +95,21 @@ export const deleteReview = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Review Id is invalid!");
   }
 
-  const review = await Review.findByIdAndDelete(reviewId);
-
+  const review = await Review.findById(reviewId);
   if (!review) {
+    throw new ApiError(403, "Review not  found!");
+  }
+
+  if (review.author.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not allowed to delete this review!");
+  }
+
+  const deletedReview = await Review.findOneAndDelete({
+    _id: reviewId,
+    author: req.user._id,
+  });
+
+  if (!deletedReview) {
     throw new ApiError(404, "Review not found!");
   }
 
