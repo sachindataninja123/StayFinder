@@ -13,6 +13,12 @@ const reviewSchema = new Schema(
     listing: {
       type: Schema.Types.ObjectId,
       ref: "Listing",
+      required: true,
+    },
+    author: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {

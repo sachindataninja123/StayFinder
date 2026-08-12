@@ -39,6 +39,9 @@ export function PropertyDetailsPage() {
     (state) => state.listings,
   );
 
+  const { user } = useSelector((state) => state.auth);
+
+
   useEffect(() => {
     dispatch(getListingById(id));
     return () => dispatch(clearSelectedListing());
@@ -418,7 +421,7 @@ export function PropertyDetailsPage() {
               <ReviewItem
                 key={rev._id}
                 review={rev}
-                // currentUserId={currentUser?._id}
+                currentUserId={user?._id}
                 onEdit={(reviewToEdit) => setEditingReview(reviewToEdit)}
                 onDelete={handleDeleteReview}
               />

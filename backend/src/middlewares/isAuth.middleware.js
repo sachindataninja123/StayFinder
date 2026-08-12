@@ -36,7 +36,7 @@ export const isRole = (...allowedRole) => {
     }
 
     if (!allowedRole.includes(req.user.role)) {
-      throw new ApiError(403, "You are not authorized");
+      throw new ApiError(403, "You are not authorized for this action!");
     }
 
     next();
