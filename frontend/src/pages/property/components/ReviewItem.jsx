@@ -9,6 +9,11 @@ export default function ReviewItem({
 }) {
   const { _id, rating, comment, createdAt, author } = review;
   const isAuthor = currentUserId && author?._id === currentUserId;
+  // console.log(isAuthor)
+
+  // console.log(review)
+
+  // console.log(_id, rating, comment, createdAt, author)
 
   return (
     <div className="rounded-2xl  bg-white space-y-2">
