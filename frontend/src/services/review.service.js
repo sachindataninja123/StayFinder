@@ -12,8 +12,8 @@ export const getReviews = async (id) => {
   return res.data;
 };
 
-export const updateReviews = async ({ formData, id }) => {
-  const res = await api.patch(`/reviews/${id}/update`, formData);
+export const updateReviews = async (reviewId, formData ) => {
+  const res = await api.patch(`/reviews/${reviewId}/update`, formData);
 
   return res.data;
 };

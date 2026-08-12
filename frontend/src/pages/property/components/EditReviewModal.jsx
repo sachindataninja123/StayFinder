@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Star, X } from "lucide-react";
-import { updateReview } from "../../features/reviews/reviewSlice";
-
+import { editReview } from "../../../features/reviews/reviewSlice";
 
 export default function EditReviewModal({ review, listingId, onClose }) {
   const dispatch = useDispatch();
@@ -23,18 +22,16 @@ export default function EditReviewModal({ review, listingId, onClose }) {
 
     setSubmitting(true);
 
-    // Call your update review thunk passing review ID and updated payload
     const result = await dispatch(
-      updateReview({
+      editReview({
         reviewId: review._id,
-        listingId,
         formData: { rating, comment },
-      })
+      }),
     );
 
     setSubmitting(false);
 
-    if (updateReview.fulfilled.match(result)) {
+    if (editReview.fulfilled.match(result)) {
       onClose();
     } else {
       setErrorMessage(result.payload || "Failed to update review.");
@@ -52,7 +49,9 @@ export default function EditReviewModal({ review, listingId, onClose }) {
         </button>
 
         <h3 className="text-xl font-bold text-gray-900 mb-1">Edit Review</h3>
-        <p className="text-sm text-gray-500 mb-6">Update your star rating or comments.</p>
+        <p className="text-sm text-gray-500 mb-6">
+          Update your star rating or comments.
+        </p>
 
         {errorMessage && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-xl">
@@ -63,7 +62,9 @@ export default function EditReviewModal({ review, listingId, onClose }) {
         <form onSubmit={handleUpdate} className="space-y-5">
           {/* Rating */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Rating
+            </label>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -88,7 +89,9 @@ export default function EditReviewModal({ review, listingId, onClose }) {
 
           {/* Comment */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Comment</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Comment
+            </label>
             <textarea
               rows={4}
               value={comment}

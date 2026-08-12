@@ -9,18 +9,18 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach((promise) => {
+  failedQueue.forEach(({ resolve, reject }) => {
     if (error) {
-      promise.reject(error);
+      reject(error);
     } else {
-      promise.resolve(token);
+      resolve(token);
     }
   });
 
   failedQueue = [];
 };
 
-// Attach access token
+// Add access token to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -31,7 +31,7 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Handle expired access token
@@ -41,13 +41,12 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Only handle 401
     if (error.response?.status !== 401) {
       return Promise.reject(error);
     }
 
-    // Don't refresh the refresh-token request itself
-    if (originalRequest.url.includes("/refresh-token")) {
+    // Don't try to refresh the refresh request itself
+    if (originalRequest.url?.includes("/auth/refresh")) {
       localStorage.removeItem("token");
       return Promise.reject(error);
     }
@@ -60,15 +59,12 @@ api.interceptors.response.use(
 
     originalRequest._retry = true;
 
-    // If another request is already refreshing
+    // Another request is already refreshing
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
-        failedQueue.push({
-          resolve,
-          reject,
-        });
-      }).then((token) => {
-        originalRequest.headers.Authorization = `Bearer ${token}`;
+        failedQueue.push({ resolve, reject });
+      }).then((newToken) => {
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
 
         return api(originalRequest);
       });
@@ -77,14 +73,21 @@ api.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const response = await api.post("/auth/v1/refresh-token");
+      // IMPORTANT: your refresh route
+      const response = await api.post("/auth/refresh");
 
-      const newAccessToken = response.data.data.accessToken;
+      const newAccessToken = response.data;
+
+      if (!newAccessToken) {
+        throw new Error("New access token not received");
+      }
+      console.log(response.data)
 
       localStorage.setItem("token", newAccessToken);
 
       processQueue(null, newAccessToken);
 
+      // Retry original request
       originalRequest.headers.Authorization =
         `Bearer ${newAccessToken}`;
 
@@ -98,7 +101,7 @@ api.interceptors.response.use(
     } finally {
       isRefreshing = false;
     }
-  }
+  },
 );
 
 export default api;

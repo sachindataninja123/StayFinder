@@ -19,7 +19,7 @@ const App = () => {
     if (token) {
       dispatch(getMeUser());
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

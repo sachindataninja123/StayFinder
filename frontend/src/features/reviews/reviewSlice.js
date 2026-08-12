@@ -34,9 +34,9 @@ export const fetchReviews = createAsyncThunk(
 
 export const editReview = createAsyncThunk(
   "reviews/update",
-  async ({ formData, id }, { rejectWithValue }) => {
+  async ({ reviewId, formData }, { rejectWithValue }) => {
     try {
-      return await updateReviews({ formData, id });
+      return await updateReviews(reviewId, formData);
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
     }
