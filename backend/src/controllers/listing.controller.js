@@ -28,7 +28,7 @@ export const getListingById = asyncHandler(async (req, res) => {
     throw new ApiError("Listing not found!");
   }
 
-  return res.status(200).json(new ApiResponse(200, listing, "Lising fetched!"));
+  return res.status(200).json(new ApiResponse(200, listing, "Listing fetched!"));
 });
 
 export const createListing = asyncHandler(async (req, res) => {

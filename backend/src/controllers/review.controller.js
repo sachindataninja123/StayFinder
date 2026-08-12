@@ -46,7 +46,7 @@ export const getReviewsByListings = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Listing not  found!");
   }
 
-  const reviews = await Review.find({ listing: id });
+  const reviews = await Review.find({ listing: id }).populate("author", "name");
 
   return res
     .status(200)

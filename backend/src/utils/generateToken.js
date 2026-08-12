@@ -8,7 +8,7 @@ const generateAccessToken = (user) => {
       role: user.role,
     },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" },
+    { expiresIn: "15s" },
   );
 };
 
@@ -18,7 +18,7 @@ const generateRefreshToken = (user) => {
       id: user._id,
     },
     process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" },
+    { expiresIn: "1m" },
   );
 };
 

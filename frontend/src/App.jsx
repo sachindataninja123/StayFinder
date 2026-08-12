@@ -19,7 +19,7 @@ const App = () => {
     if (token) {
       dispatch(getMeUser());
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -27,9 +27,9 @@ const App = () => {
         <Route path="/signup" element={<Register />} />
         <Route path="/signin" element={<Login />} />
         <Route path="/" element={<Home />} />
+        <Route path="/listings/:id" element={<PropertyDetailsPage />} />
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/listings/:id" element={<PropertyDetailsPage />} />
           <Route path="/listings/new" element={<CreateListing />} />
           <Route path="/listings/:id/edit" element={<EditListing />} />
           <Route path="/profile" element={<Profile />} />

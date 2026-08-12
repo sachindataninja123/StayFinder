@@ -131,7 +131,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, "Access token refreshed successfully"));
+    .json(new ApiResponse(200, accessToken, "Access token refreshed successfully"));
 });
 
 export const logout = asyncHandler(async (req, res) => {

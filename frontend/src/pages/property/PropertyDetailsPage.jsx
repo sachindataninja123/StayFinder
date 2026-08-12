@@ -25,6 +25,7 @@ import {
 } from "../../features/reviews/reviewSlice";
 import { deleteReviews } from "../../services/review.service";
 import ReviewItem from "./components/ReviewItem";
+import EditReviewModal from "./components/EditReviewModal";
 
 export function PropertyDetailsPage() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -54,7 +55,6 @@ export function PropertyDetailsPage() {
 
   const { reviews } = useSelector((state) => state.reviews);
 
-  console.log(reviews);
 
   const handleDeleteReview = async (reviewId) => {
     try {
